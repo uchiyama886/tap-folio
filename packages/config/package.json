@@ -1,0 +1,9 @@
+{
+  "name": "@portfolio-share/config",
+  "version": "0.0.0",
+  "private": true,
+  "files": [
+    "eslint-preset.js",
+    "tsconfig.base.json"
+  ]
+}
