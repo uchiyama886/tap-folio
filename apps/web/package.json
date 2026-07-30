@@ -14,6 +14,9 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "zustand": "^4.5.5",
+    "qrcode": "^1.5.4",
+    "@supabase/ssr": "^0.5.2",
+    "@supabase/supabase-js": "^2.45.4",
     "@portfolio-share/core": "workspace:*",
     "@portfolio-share/ui": "workspace:*"
   },
@@ -21,6 +24,7 @@
     "@types/node": "^20.16.10",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
+    "@types/qrcode": "^1.5.5",
     "typescript": "^5.6.3",
     "tailwindcss": "^3.4.13",
     "postcss": "^8.4.47",
