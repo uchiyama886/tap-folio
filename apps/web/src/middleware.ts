@@ -6,14 +6,22 @@ type CookieToSet = { name: string; value: string; options: CookieOptions };
 /**
  * 各リクエストでSupabaseセッションを更新（トークンリフレッシュ）し、
  * Cookieをレスポンスへ引き継ぐ。App Router + @supabase/ssr の推奨パターン。
+ *
+ * 環境変数が未設定の場合や更新失敗時でも 500 で全ルートを落とさず、
+ * セッション更新をスキップして素通しする（堅牢化）。
  */
 export async function middleware(request: NextRequest) {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return NextResponse.next({ request });
+  }
+
   let response = NextResponse.next({ request });
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
+  try {
+    const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
       cookies: {
         getAll() {
           return request.cookies.getAll();
@@ -28,11 +36,13 @@ export async function middleware(request: NextRequest) {
           });
         },
       },
-    },
-  );
+    });
 
-  // getUser() を呼ぶことでセッションが検証・更新される
-  await supabase.auth.getUser();
+    // getUser() を呼ぶことでセッションが検証・更新される
+    await supabase.auth.getUser();
+  } catch {
+    // セッション更新に失敗しても素通しする
+  }
 
   return response;
 }
